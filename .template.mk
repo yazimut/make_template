@@ -1,0 +1,117 @@
+# Include global Makefile
+ifndef GLOBAL
+  include .global.mk
+endif
+
+# Project: Application
+  ProjectName         := Application
+  Project             := $(ProjectName).elf
+  Target              := $(Bins)/$(Project)
+  CC_Objects          := $(patsubst $(Sources)/%.c,$(Tmps)/%.o,$(wildcard $(Sources)/$(ProjectName)/*.c))
+  CPP_Objects         := $(patsubst $(Sources)/%.cpp,$(Tmps)/%.o,$(wildcard $(Sources)/$(ProjectName)/*.cpp))
+  MakeDeps            := $(wildcard $(Tmps)/$(ProjectName)/*.mk)
+  Defines             += 
+  Includes            += 
+  LDs                 += 
+  Libraries           := 
+
+# Toolchain
+#   C compiler
+    CC                := gcc
+    CC_Debug          := -g3 -Og
+    CC_CompilerFlags   = $(CC_Debug) $(addprefix -I,$(Includes)) $(addprefix -D,$(Defines)) -MMD -MF $(patsubst $(Sources)/%.c,$(Tmps)/%.mk,$<)
+    CC_CompilerFlags  += -std=c17 -c
+    CC_LinkerFlags     = $(addprefix -L,$(LDs))
+    CC_LinkerFlags    += 
+
+#   C++ compiler
+    CPP               := g++
+    CPP_Debug         := -g3 -Og
+    CPP_CompilerFlags  = $(CPP_Debug) $(addprefix -I,$(Includes)) $(addprefix -D,$(Defines)) -MMD -MF $(patsubst $(Sources)/%.cpp,$(Tmps)/%.mk,$<)
+    CPP_CompilerFlags += -std=c++17 -c
+    CPP_LinkerFlags    = $(addprefix -L,$(LDs))
+    CPP_LinkerFlags   += 
+
+.DEFAULT_GOAL := $(ProjectName)
+.PHONY: $(ProjectName) print
+
+.PHONY: help self-config clean re-build install hard-install uninstall
+.SILENT: help self-config clean re-build install hard-install uninstall
+
+# Help
+help:
+	@printf "\033[1;33mUsage: \033[0m"
+	@printf "\033[1;31mmake -f $(ProjectName).mk\033[0m [Config=<cfg>] [Action]"
+	@printf "\n"
+	@printf "    Config=<cfg>                       - Set build configuration to \"cfg\"\n"
+	@printf "                                         Can be \"Debug\" or \"Release\"\n"
+	@printf "                                         All possible values are in the $(ProjectName).mk:self-config\n"
+	@printf "                                         Default is \"Debug\"\n"
+	@printf "    Action                             - What should be done with project\n"
+	@printf "                                         Can be \"clean\", \"re-build\", \"install\", \"hard-install\" or \"uninstall\"\n"
+	@printf "\n"
+	@printf "  \033[1;33mExamples: \033[0m\n"
+	@printf "    make -f $(ProjectName).mk                            - Build project\n"
+	@printf "    make -f $(ProjectName).mk Config=Release re-build    - Re-build project in Release configuration"
+	@printf "\n"
+
+# Auto detect configuration
+self-config:
+  ifeq ($(Config), Debug)
+    # Debug configuration
+    CC_Debug := -g3 -Og
+    CPP_Debug := -g3 -Og
+  else
+    ifeq ($(Config), Release)
+      # Release configuration
+      CC_Debug := -g0 -O2
+      CPP_Debug := -g0 -O2
+    else
+      # Wrong configuration 
+	    $(error Invalid configuration "$(Config)")
+    endif
+  endif
+
+
+
+# ------------------------------------------------------------------------------
+# Recipes
+# ------------------------------------------------------------------------------
+
+# C sources
+$(Tmps)/%.o: $(Sources)/%.c
+	$(CC) $(CC_CompilerFlags) -o $@ $<
+
+# C++ sources
+$(Tmps)/%.o: $(Sources)/%.cpp
+	$(CPP) $(CPP_CompilerFlags) -o $@ $<
+
+# Include project recipes
+include $(MakeDeps)
+
+$(ProjectName): print self-config $(Target)
+
+print:
+	@echo "\033[1;33mBuilding $(ProjectName):\033[0m"
+
+clean:
+	@printf "\033[1;33mCleaning $(ProjectName)... \033[0m"
+	@rm -f $(Target)
+	@rm -f $(CC_Objects)
+	@rm -f $(CPP_Objects)
+	@rm -f $(MakeDeps)
+	@printf "\033[1;32mDone! \033[0m\n"
+
+re-build: clean $(Target)
+
+install:
+	$(nop)
+
+hard-install:
+	$(nop)
+
+uninstall:
+	$(nop)
+
+$(Target): $(CC_Objects) $(CPP_Objects)
+	$(CPP) $(CPP_LinkerFlags) -o $@ $+ $(addprefix -l,$(Libraries))
