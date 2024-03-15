@@ -14,6 +14,9 @@ Most of all, this template is targeted for auto resolving C/C++ source file depe
 * GNU Bash 5.0.17(1)-release
 * GNU Make 4.2.1
 * GNU coreutils 8.30
+* GCC 9.4.0
+* G++ 9.4.0
+* GNU ranlib (GNU Binutils) 2.34
 
 ## Contacts and support
 If you have any questions or suggestions, contact the developers:

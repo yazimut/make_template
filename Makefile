@@ -5,11 +5,11 @@ endif
 
 # Projects list
 # Note that building process is going exactly in that order!
-Projects := 
+Projects := lib dll app
 ProjectsMakefiles = $(addsuffix .mk,$(Projects))
 
 # Preparation completion flag
-Prepared := False
+Prepared := True
 
 # Default target to Make
 .DEFAULT_GOAL := all
