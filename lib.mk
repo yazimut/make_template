@@ -3,13 +3,17 @@ ifndef GLOBAL
   include .global.mk
 endif
 
+# Suffixes
+  OBJ_SUFFIX          := o
+  MAKEDEPS_SUFFIX     := mk
+
 # Project: lib
   ProjectName         := lib
   Project             := lib$(ProjectName).a
   Target              := $(Bins)/$(Project)
-  CC_Objects          := $(patsubst $(Sources)/%.c,$(Tmps)/%.o,$(wildcard $(Sources)/$(ProjectName)/*.c))
-  CPP_Objects         := $(patsubst $(Sources)/%.cpp,$(Tmps)/%.o,$(wildcard $(Sources)/$(ProjectName)/*.cpp))
-  MakeDeps            := $(wildcard $(Tmps)/$(ProjectName)/*.mk)
+  CC_Objects          := $(patsubst $(Sources)/%.c,$(Tmps)/%.$(OBJ_SUFFIX),$(wildcard $(Sources)/$(ProjectName)/*.c))
+  CPP_Objects         := $(patsubst $(Sources)/%.cpp,$(Tmps)/%.$(OBJ_SUFFIX),$(wildcard $(Sources)/$(ProjectName)/*.cpp))
+  MakeDeps            := $(wildcard $(Tmps)/$(ProjectName)/*.$(MAKEDEPS_SUFFIX))
   Defines             += 
   Includes            += 
   LDs                 += 
@@ -19,7 +23,8 @@ endif
 #   C compiler
     CC                := gcc
     CC_Debug          := -g3 -Og
-    CC_CompilerFlags   = $(CC_Debug) $(addprefix -I,$(Includes)) $(addprefix -D,$(Defines)) -MMD -MF $(patsubst $(Sources)/%.c,$(Tmps)/%.mk,$<)
+    CC_CompilerFlags   = $(CC_Debug) $(addprefix -I,$(Includes)) $(addprefix -D,$(Defines))
+    CC_CompilerFlags  += -MMD -MF $(patsubst $(Sources)/%.c,$(Tmps)/%.$(MAKEDEPS_SUFFIX),$<)
     CC_CompilerFlags  += -std=c17 -c
     CC_LinkerFlags     = $(addprefix -L,$(LDs))
     CC_LinkerFlags    += 
@@ -27,7 +32,8 @@ endif
 #   C++ compiler
     CPP               := g++
     CPP_Debug         := -g3 -Og
-    CPP_CompilerFlags  = $(CPP_Debug) $(addprefix -I,$(Includes)) $(addprefix -D,$(Defines)) -MMD -MF $(patsubst $(Sources)/%.cpp,$(Tmps)/%.mk,$<)
+    CPP_CompilerFlags  = $(CPP_Debug) $(addprefix -I,$(Includes)) $(addprefix -D,$(Defines))
+    CPP_CompilerFlags += -MMD -MF $(patsubst $(Sources)/%.cpp,$(Tmps)/%.$(MAKEDEPS_SUFFIX),$<)
     CPP_CompilerFlags += -std=c++17 -c
     CPP_LinkerFlags    = $(addprefix -L,$(LDs))
     CPP_LinkerFlags   += 
@@ -110,13 +116,19 @@ clean:
 re-build: clean $(Target)
 
 install:
-	$(nop)
+#	@printf "\033[1;33mInstalling $(ProjectName)... \033[0m"
+	@$(nop)
+#	@printf "\033[1;32mDone! \033[0m\n"
 
 hard-install:
-	$(nop)
+#	@printf "\033[1;33mHard installing $(ProjectName)... \033[0m"
+	@$(nop)
+#	@printf "\033[1;32mDone! \033[0m\n"
 
 uninstall:
-	$(nop)
+#	@printf "\033[1;33mUninstalling $(ProjectName)... \033[0m"
+	@$(nop)
+#	@printf "\033[1;32mDone! \033[0m\n"
 
 $(Target): $(CC_Objects) $(CPP_Objects)
 	$(AR) $(AR_Flags) $@ $+
