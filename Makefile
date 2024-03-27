@@ -77,40 +77,31 @@ make-project:
 	$(error Invalid project name "$(ProjectName)". See "make help")
   endif
 
-# Do something for every project
-# Parameter $(1) - makefile target
-define forAnyProject
-	for project in $(ProjectsMakefiles); do \
-		$(MAKE) -f $$project $(1); \
-	done
-endef
-
 # Build all projects
-all:
-	@$(call color-echo,Building whole solution...,1;33)
-	@$(call forAnyProject)
-	@$(call color-echo,Build complete!,1;32)
+all: $(Projects)
 
-clean:
-	@$(call forAnyProject,clean)
+clean: $(addsuffix .c,$(Projects))
 
 re-build: clean all
 
-install:
-	@$(call color-echo,Installing whole solution...,1;33)
-	@$(call forAnyProject,install)
-	@$(call color-echo,Installation complete!,1;32)
+install: $(addsuffix .i,$(Projects))
 
-hard-install:
-	@$(call color-echo,Installing whole solution...,1;33)
-	@$(call forAnyProject,hard-install)
-	@$(call color-echo,Installation complete!,1;32)
+hard-install: $(addsuffix .hi,$(Projects))
 
-uninstall: 
-	@$(call color-echo,Uninstalling whole solution...,1;33)
-	@$(call forAnyProject,uninstall)
-	@$(call color-echo,Uninstallation complete!,1;32)
+uninstall: $(addsuffix .u,$(Projects))
 
 # Build single project
 %: %.mk
 	@$(MAKE) -f $<
+
+%.c: %.mk
+	@$(MAKE) -f $< clean
+
+%.i: %.mk
+	@$(MAKE) -f $< install
+
+%.hi: %.mk
+	@$(MAKE) -f $< hard-install
+
+%.u: %.mk
+	@$(MAKE) -f $< uninstall

@@ -24,14 +24,3 @@ ifeq ($(Config), Debug)
 else
   export Defines := 
 endif
-
-# Function to color echo
-# Parameter $(1) - text to echo
-# Parameter $(2) - color (echo man)
-define color-echo
-	@echo ""
-	@echo "\033[$(2)m--------------------------------\033[0m"
-	@echo "\033[$(2)m$(1)\033[0m"
-	@echo "\033[$(2)m--------------------------------\033[0m"
-	@echo "" 
-endef
