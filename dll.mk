@@ -18,6 +18,8 @@ endif
   Includes            += 
   LDs                 += 
   Libraries           := 
+  Dependencies        := $(CC_Objects) $(CPP_Objects)
+  Dependencies        += 
 
 # Toolchain
 #   C compiler
@@ -38,11 +40,11 @@ endif
     CPP_LinkerFlags    = $(addprefix -L,$(LDs))
     CPP_LinkerFlags   += -shared
 
-.DEFAULT_GOAL := $(ProjectName)
-.PHONY: $(ProjectName) print
-
 .PHONY: help self-config clean re-build install hard-install uninstall
 .SILENT: help self-config clean re-build install hard-install uninstall
+
+.DEFAULT_GOAL := $(ProjectName)
+.PHONY: $(ProjectName)
 
 # Help
 help:
@@ -95,39 +97,26 @@ $(Tmps)/%.o: $(Sources)/%.cpp
 # Include project recipes
 include $(MakeDeps)
 
-$(ProjectName): print self-config $(Target)
-
-print:
-	@echo "\033[1;33mBuilding $(ProjectName):\033[0m"
+$(ProjectName): self-config $(Dependencies) $(Target)
 
 clean:
-	@printf "\033[1;33mCleaning $(ProjectName)... \033[0m"
 	@rm -f $(Target)
-	@rm -f $(CC_Objects)
-	@rm -f $(CPP_Objects)
-	@rm -f $(MakeDeps)
-	@printf "\033[1;32mDone! \033[0m\n"
+	@rm -f $(Tmps)/$(ProjectName)/*.$(OBJ_SUFFIX)
+	@rm -f $(Tmps)/$(ProjectName)/*.$(MAKEDEPS_SUFFIX)
 
 re-build: clean $(Target)
 
 install:
-	@printf "\033[1;33mInstalling $(ProjectName)... \033[0m"
 	@ln -f -s $(SolutionDir)/$(Target) /usr/lib/$(Project)
 	@ldconfig
-	@printf "\033[1;32mDone! \033[0m\n"
-	
 
 hard-install:
-	@printf "\033[1;33mHard installing $(ProjectName)... \033[0m"
 	@cp -f $(SolutionDir)/$(Target) /usr/lib/$(Project)
 	@ldconfig
-	@printf "\033[1;32mDone! \033[0m\n"
 
 uninstall:
-	@printf "\033[1;33mUninstalling $(ProjectName)... \033[0m"
 	@rm -f /usr/lib/$(Project)
 	@ldconfig
-	@printf "\033[1;32mDone! \033[0m\n"
 
 $(Target): $(CC_Objects) $(CPP_Objects)
 	$(CPP) $(CPP_LinkerFlags) -o $@ $+ $(addprefix -l,$(Libraries))
