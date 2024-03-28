@@ -93,16 +93,26 @@ uninstall: $(addsuffix .u,$(Projects))
 
 # Build single project
 %: %.mk
+	@printf "\033[1;33mBuilding $(basename $@)...\033[0m\n"
 	@$(MAKE) -f $<
+	@printf "\033[1;32mDone!\033[0m\n"
 
 %.c: %.mk
+	@printf "\033[1;33mCleaning $(basename $@)... \033[0m"
 	@$(MAKE) -f $< clean
+	@printf "\033[1;32mDone!\033[0m\n"
 
 %.i: %.mk
+	@printf "\033[1;33mInstalling $(basename $@)... \033[0m"
 	@$(MAKE) -f $< install
+	@printf "\033[1;32mDone!\033[0m\n"
 
 %.hi: %.mk
+	@printf "\033[1;33mHard installing $(basename $@)... \033[0m"
 	@$(MAKE) -f $< hard-install
+	@printf "\033[1;32mDone!\033[0m\n"
 
 %.u: %.mk
+	@printf "\033[1;33mUninstalling $(basename $@)... \033[0m"
 	@$(MAKE) -f $< uninstall
+	@printf "\033[1;32mDone!\033[0m\n"

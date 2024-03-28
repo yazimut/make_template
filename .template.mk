@@ -44,8 +44,7 @@ endif
 .SILENT: help self-config clean re-build install hard-install uninstall
 
 .DEFAULT_GOAL := $(ProjectName)
-.PHONY: print $(ProjectName)
-.SILENT: print
+.PHONY: $(ProjectName)
 
 # Help
 help:
@@ -98,36 +97,23 @@ $(Tmps)/%.o: $(Sources)/%.cpp
 # Include project recipes
 include $(MakeDeps)
 
-$(ProjectName): print self-config $(Dependencies) $(Target)
-	@printf "\033[1;33mBuilding $(ProjectName): \033[0m"
-	@printf "\033[1;32mDone!\033[0m\n"
-
-print:
-	@echo "\033[1;33mBuilding $(ProjectName):\033[0m"
+$(ProjectName): self-config $(Dependencies) $(Target)
 
 clean:
-	@printf "\033[1;33mCleaning $(ProjectName)... \033[0m"
 	@rm -f $(Target)
 	@rm -f $(Tmps)/$(ProjectName)/*.$(OBJ_SUFFIX)
 	@rm -f $(Tmps)/$(ProjectName)/*.$(MAKEDEPS_SUFFIX)
-	@printf "\033[1;32mDone!\033[0m\n"
 
 re-build: clean $(Target)
 
 install:
-#	@printf "\033[1;33mInstalling $(ProjectName)... \033[0m"
 	@$(nop)
-#	@printf "\033[1;32mDone!\033[0m\n"
 
 hard-install:
-#	@printf "\033[1;33mHard installing $(ProjectName)... \033[0m"
 	@$(nop)
-#	@printf "\033[1;32mDone!\033[0m\n"
 
 uninstall:
-#	@printf "\033[1;33mUninstalling $(ProjectName)... \033[0m"
 	@$(nop)
-#	@printf "\033[1;32mDone!\033[0m\n"
 
 $(Target): $(CC_Objects) $(CPP_Objects)
 	$(CPP) $(CPP_LinkerFlags) -o $@ $+ $(addprefix -l,$(Libraries))
