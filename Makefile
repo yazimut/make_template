@@ -19,6 +19,7 @@ Prepared := False
 
 .PHONY: help self-config clean re-build install hard-install uninstall
 .SILENT: help self-config clean re-build install hard-install uninstall
+.NOTPARALLEL: all
 
 # Help
 help:
