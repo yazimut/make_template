@@ -1,0 +1,51 @@
+# EditorConfig
+*.editorconfig
+
+# Git files
+*.git*
+
+# Executables
+*.bin
+*.out
+*.elf
+*.elf16
+*.elf32
+*.elf64
+*.exe
+*.com
+*.app
+
+# Compiled Object files
+*.o
+*.obj
+*.lo
+*.slo
+
+# Compiled Dynamic libraries
+*.so
+*.dll
+*.dylib
+
+# Compiled Static libraries
+*.a
+*.lib
+*.la
+*.lai
+
+# Makefiles
+Makefile
+makefile
+*.mk
+
+# Temp files
+tmp/**/*
+
+# Visual Studio temp files
+.VS/**/*
+.vscode/**/*
+
+# Windows special files
+desktop.ini
+
+# Logs
+*.log
