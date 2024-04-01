@@ -6,13 +6,13 @@ endif
 # Building order
 # Add .WAIT to finish building left-side projects
 # This is important for parallel compilation (-j flag)
-BuildingOrder := 
+BuildingOrder := lib dll .WAIT app
 
 # Projects list
 Projects      := $(subst .WAIT, ,$(BuildingOrder))
 
 # Preparation completion flag
-Prepared := False
+Prepared := True
 
 # Default target to Make
 .DEFAULT_GOAL := all
